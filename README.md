@@ -7,7 +7,7 @@ It will also tell you what kind of diet you should and it would show links that 
 
 ## Installation
 
-You can clone this repository by using this code
+You can clone this repository by using this command line
 
 ```bash
 $ git clone https://github.com/Naty89/BodyInfo
