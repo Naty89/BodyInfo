@@ -5,26 +5,17 @@ It also tells the how many pounds you need to loose to go down a category and it
 Another thing is it tells you how much you need to workout and for how long you need to work out for.
 It will also tell you what kind of diet you should and it would show links that lead you to some recipes.
 
-## Required Library
+## Installation
 
-For this code you need the following python librarys:
-
-math library
+You can clone this repository by using this code
 
 ```bash
-$ pip install python-math
+$ git clone https://github.com/Naty89/BodyInfo
 ```
 
-pandas library
-
+Install the requirements
 ```bash
-$ pip install pandas
-```
-
-click library
-
-```bash
-$ pip install click
+$ pip install -r requirements.txt
 ```
 ## Usage
 
