@@ -39,7 +39,7 @@ class BodyInfo:
     using the U.S Navy method
     """
 
-    def us_navy_method(self):
+    def US_NAVY_METHOD(self):
         if self.gender.lower() == 'male':
             return round(86.010 * log10(self.waist - self.neck) - 70.041 * log10(self.height) + 36.76, 1)
         return round(163.205 * log10(self.waist + self.hip - self.neck) - 97.684 * log10(self.height) - 78.387, 1)
@@ -50,23 +50,23 @@ class BodyInfo:
     the BMI(Body Mass Index) method
     """
 
-    def bmi_method(self):
+    def BMI_METHOD(self):
         BMI = (self.weight / self.height ** 2) * 703
         if self.gender.lower() == 'male':
-            return 1.20 * BMI + 0.23 * self.age - 16.2
-        return 1.20 * BMI + 0.23 * self.age - 5.4
+            return round(1.20 * BMI + 0.23 * self.age - 16.2, 1)
+        return round(1.20 * BMI + 0.23 * self.age - 5.4, 1)
 
     """
     This shows you the body fat 
     categories, and which one your in
     """
 
-    def body_fat_category(self):
+    def BODY_FAT_CATEGORY(self):
         """
         This part of the code figures out the body fat
         percantage using the navy method
         """
-        BFP = round(self.US_Navy_Method(), 1)
+        BFP = round(self.US_NAVY_METHOD(), 1)
         #         if self.gender.lower() == 'male':
         #             BFP = round(86.010 * log10(self.waist - self.neck) - 70.041 * log10(self.height) + 36.76)
         #         else:
@@ -108,17 +108,92 @@ class BodyInfo:
     pounds you need to lose.
     """
 
-    def pounds_to_lose(self):
+    def POUNDS_TO_LOSE(self):
 
         """
         This function tells you what category your
         are in
         """
-        pass
+        def category_in():
+
+            # This part of the code calls out the US_Navy_Method method
+            # to get the BFP
+            BFP = round(self.US_NAVY_METHOD(), 1)
+            df = pd.read_csv('BFP_Catergories.csv')
+            # This makes a dictionary of the category
+            # and the body percentage associated with it.
+
+            BFP = round(self.US_NAVY_METHOD(), 1)
+            df = pd.read_csv('BFP_Catergories.csv')
+            female = {}
+            male = {}
+            for i in range(len(df.Description)):
+                female[df.Description[i]] = df.Women[i].replace('%', '').replace('+', '').split('-')
+            for i in range(len(df.Description)):
+                male[df.Description[i]] = df.Men[i].replace('%', '').replace('+', '').split('-')
+
+            """
+            This tells what category you are in
+            """
+            if self.gender.lower() == 'male':
+                for key, value in male.items():
+                    if BFP > int(value[0]) and BFP < int(value[-1]):
+                        return (key)
+            else:
+                for key, value in female.items():
+                    if BFP > int(value[0]) and BFP < int(value[-1]):
+                        return (key)
+
+        # return(category_in())
+
+        def category_below():
+            #"""
+            #This makes a dictionary of the category
+            #and the body percentage associated with it.
+            #"""
+            df = pd.read_csv('BFP_Catergories.csv')
+            female = {}
+            male = {}
+            c_in = category_in()
+            for i in range(len(df.Description)):
+                female[df.Description[i]] = df.Women[i].replace('%', '').replace('+', '').split('-')
+            for i in range(len(df.Description)):
+                male[df.Description[i]] = df.Men[i].replace('%', '').replace('+', '').split('-')
+            y = list(female.keys())
+            x = list(male.keys())
+            if self.gender == 'male':
+                for i in range(len(x)):
+                    if x[i] == c_in:
+                        return(int(male[x[i - 1]][-1]))
+            else:
+                for i in range(len(y)):
+                    if y[i] == c_in:
+                        return(int(female[y[i - 1]][-1]))
+
+        # return(category_below())
+
+        def pounds_to_lose():
+            pre_bfp = round(self.US_NAVY_METHOD(), 1)
+            af_bfp = round(self.US_NAVY_METHOD(), 1)
+            cb = category_below()
+            if self.gender.lower() == 'male':
+                if pre_bfp <= 5:
+                    "You shouldn't be losing any more weight."
+                else:
+                    while af_bfp > cb:
+                        af_bfp -= 0.2
+                    return "You have to lose {} pounds".format(round(round(round(pre_bfp - round(af_bfp, 1), 1) / 0.2) * 0.8))
+            else:
+                if pre_bfp <= 13:
+                    "You shouldn't be losing any more weight."
+                else:
+                    while af_bfp > cb:
+                        af_bfp -= 0.2
+                    return "You have to lose {} pounds".format(round(round(round(pre_bfp - round(af_bfp, 1), 1) / 0.2) * 0.8))
+
+        return(pounds_to_lose())
 
 
-# x = BodyInfo(152, 70.5, 'male', 25, 19.5, 37.5, 3.75)
-# print(x.US_Navy_Method())
 
 @click.command()
 @click.option('--weight', '-w', default=152, help='the amount of pounds you weigh.')
@@ -132,7 +207,6 @@ class BodyInfo:
 @click.option('--method', '-m', default='us_navy_method',
               help='the method that you want to run, here are the method that you can run:'
                    '\n US_Navy_Method, BMI_Method, Body_Fat_Category, Pounds_To_Lose')
-
 def runBodyInfo(weight, height, gender, age, neck, waist, hip, method):
     """
     This is a class that tells you what your body percentage is
@@ -147,16 +221,16 @@ def runBodyInfo(weight, height, gender, age, neck, waist, hip, method):
     x = BodyInfo(weight, height, gender, age, neck, waist, hip)
 
     if method.lower() == 'us_navy_method':
-        print(x.us_navy_method())
+        print(x.US_NAVY_METHOD())
 
     elif method.lower() == 'bmi_method':
-        print(x.bmi_method())
+        print(x.BMI_METHOD())
 
     elif method.lower() == 'body_fat_category':
-        print(x.body_fat_category())
+        print(x.BODY_FAT_CATEGORY())
 
     elif method.lower() == 'pounds_to_lose':
-        print(x.pounds_to_lose())
+        print(x.POUNDS_TO_LOSE())
 
 
 if __name__ == '__main__':
