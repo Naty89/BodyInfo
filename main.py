@@ -90,7 +90,7 @@ class BodyInfo:
         if self.gender.lower() == 'male':
             for key, value in male.items():
                 if BFP > int(value[0]) and BFP < int(value[-1]):
-                    return ('You are in the {} category'.format(BFP))
+                    return ('You are in the {} category'.format(key))
         if self.gender.lower() == 'female':
             for key, value in female.items():
                 if BFP > int(value[0]) and BFP < int(value[-1]):
@@ -170,43 +170,54 @@ class BodyInfo:
                     if y[i] == c_in:
                         return(int(female[y[i - 1]][-1]))
 
-        # return(category_below())
 
         def pounds_to_lose():
-            pre_bfp = round(self.US_NAVY_METHOD(), 1)
-            af_bfp = round(self.US_NAVY_METHOD(), 1)
-            cb = category_below()
+            BFP = round(self.US_NAVY_METHOD(), 1)
+            goal_bfp = category_below()
             if self.gender.lower() == 'male':
-                if pre_bfp <= 5:
-                    "You shouldn't be losing any more weight."
+                if BFP <= 5:
+                    return("You shouldn't be losing any more weight.")
                 else:
-                    while af_bfp > cb:
-                        af_bfp -= 0.2
-                    return "You have to lose {} pounds".format(round(round(round(pre_bfp - round(af_bfp, 1), 1) / 0.2) * 0.8))
+                    return("You need to lose {} pounds to go down a category".format(round(self.weight - self.weight * (1 - (BFP / 100)) / (1 - (goal_bfp / 100)), 1)))
             else:
-                if pre_bfp <= 13:
-                    "You shouldn't be losing any more weight."
+                if BFP <= 13:
+                    return("You shouldn't be losing any more weight.")
                 else:
-                    while af_bfp > cb:
-                        af_bfp -= 0.2
-                    return "You have to lose {} pounds".format(round(round(round(pre_bfp - round(af_bfp, 1), 1) / 0.2) * 0.8))
+                    return ("You need to lose {} pounds to go down a category".format(round(self.weight - self.weight * (1 - (BFP / 100)) / (1 - (goal_bfp / 100)), 1)))
 
         return(pounds_to_lose())
+
+    def SIX_PACK(self):
+
+        goal_bfp = 10
+        BFP = round(self.US_NAVY_METHOD(), 1)
+        if self.gender.lower() == 'male':
+            if BFP <= 5:
+                return("You shouldn't be losing any more weight.")
+            else:
+                return("You need to lose {} pounds to get a six pack".format(round(self.weight - self.weight * (1 - (BFP / 100)) / (1 - (goal_bfp / 100)), 1)))
+        else:
+            if BFP <= 13:
+                return("You shouldn't be losing any more weight.")
+            else:
+                return("You need to lose {} pounds to get a six pack".format(round(self.weight - self.weight * (1 - (BFP / 100)) / (1 - (goal_bfp / 100)), 1)))
+
+
 
 
 
 @click.command()
-@click.option('--weight', '-w', default=152, help='the amount of pounds you weigh.')
-@click.option('--height', '-h', default=70.5, help='your height in inches')
+@click.option('--weight', '-w', default=146, help='the amount of pounds you weigh.')
+@click.option('--height', '-h', default=64.5, help='your height in inches')
 @click.option('--gender', '-g', default='male', help='your gender')
-@click.option('--age', '-a', default=25, help='age')
-@click.option('--neck', '-n', default=19.5, help='circumference of your neck in inches')
-@click.option('--waist', default=37.5, help='your waist circumference in inches')
-@click.option('--hip', default=37.5,
+@click.option('--age', '-a', default=15, help='age')
+@click.option('--neck', '-n', default=14.5, help='circumference of your neck in inches')
+@click.option('--waist', default=33.5, help='your waist circumference in inches')
+@click.option('--hip', default=33.5,
               help='the circumference of your hip in inches, if you are a male then it would be the same as your waist')
 @click.option('--method', '-m', default='us_navy_method',
               help='the method that you want to run, here are the method that you can run:'
-                   '\n US_Navy_Method, BMI_Method, Body_Fat_Category, Pounds_To_Lose')
+                   '\n US_Navy_Method, BMI_Method, Body_Fat_Category, Pounds_To_Lose, Six_Pack')
 def runBodyInfo(weight, height, gender, age, neck, waist, hip, method):
     """
     This is a class that tells you what your body percentage is
@@ -232,6 +243,8 @@ def runBodyInfo(weight, height, gender, age, neck, waist, hip, method):
     elif method.lower() == 'pounds_to_lose':
         print(x.POUNDS_TO_LOSE())
 
+    elif method.lower() == 'six_pack':
+        print(x.SIX_PACK())
 
 if __name__ == '__main__':
     runBodyInfo()
